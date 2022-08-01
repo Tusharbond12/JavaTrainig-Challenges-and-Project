@@ -1,11 +1,12 @@
 package src.main;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import src.main.model.account.Account;
 import src.main.utils.Color;
-
+import src.main.model.account.Personal;
 public class Main {
 
     static Account account; 
@@ -13,8 +14,15 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
   
     public static void main(String[] args) {    
-
       
+        HashMap<String,Integer> map=new HashMap<String,Integer>();//Creating HashMap    
+        map.put("TSLA",5);
+        map.put("GOOG",5);
+        map.put("FB",5);
+        map.put("AAPL",5);
+        double funds=3400;
+        Account acc=new Personal(map, funds);
+        System.out.println(acc);
     }
 
     public static void explainApp() {
