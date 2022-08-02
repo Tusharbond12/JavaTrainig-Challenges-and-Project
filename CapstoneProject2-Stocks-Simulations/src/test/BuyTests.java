@@ -10,17 +10,18 @@ import org.junit.Test;
 import src.main.model.account.Account;
 import src.main.model.account.Personal;
 import src.main.model.account.Tfsa;
-
+import src.main.model.account.Trade;
 
 public class BuyTests {
     
     static Account  acc1;
     static Account acc2;
+    static Trade trade;
     @Before
     public void main()
     {  
         HashMap<String,Integer> map=new HashMap<String,Integer>();//Creating HashMap    
-        map.put("TSLA",5);
+        map.put("TSLA",20);
         map.put("GOOG",5);
         map.put("FB",5);
         map.put("AAPL",5);
@@ -45,6 +46,15 @@ public class BuyTests {
         assertEquals(acc2.getFunds(), 3400-20*30-0.01*600);
         // assertEquals(acc.getPortfolio().get("TSLA"), 15);}
      }}
+     @Test
+     public void testProcessTrade()
+     {
+      trade=new Trade("TSLA", "BUY", 10, 20.00);
+      trade.processTrade(acc2);
+      assertEquals(acc2.getPortfolio().get("TSLA"), 30); 
+      assertEquals(acc2.getFunds(), 3400-20*10-2);
+     }
+
      
 
 

@@ -1,12 +1,22 @@
 package src.main;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import javax.naming.directory.InitialDirContext;
 
 import src.main.model.account.Account;
 import src.main.utils.Color;
 import src.main.model.account.Personal;
+import src.main.model.account.Tfsa;
+import src.main.model.account.Trade;
 public class Main {
 
     static Account account; 
@@ -14,15 +24,41 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
   
     public static void main(String[] args) {    
-      
+      explainApp();
+      createObject(accountChoice());
+      initialBalance();
+      startTrading();
+    
+     
+    }
+    public static void startTrading()
+    {   Trade trade;
+        for(int day=1;day<=2160;day++)
+        {  
+           displayPrices(day);
+           String stock= chooseStock();
+           String choice=buyOrSell();
+           int shares=numShares(choice);
+           double price=Double.parseDouble(getPrice(stock, day));
+           trade=new Trade(stock, choice.toUpperCase(), shares, price);
+           tradeStatus(trade.processTrade(account)?"successful":"unsuccessful");
+        }
+    }
+    public static void createObject( String choice)
+    {
         HashMap<String,Integer> map=new HashMap<String,Integer>();//Creating HashMap    
-        map.put("TSLA",5);
-        map.put("GOOG",5);
-        map.put("FB",5);
-        map.put("AAPL",5);
-        double funds=3400;
-        Account acc=new Personal(map, funds);
-        System.out.println(acc);
+        map.put("TSLA",0);
+        map.put("GOOG",0);
+        map.put("FB",0);
+        map.put("AAPL",0);
+        double funds=INITIAL_DEPOSIT;
+        if(choice.equals("a"))
+        {
+           account=new Personal(map,funds);
+        }
+        else{
+            account=new Tfsa(map,funds);
+        }
     }
 
     public static void explainApp() {
@@ -35,7 +71,7 @@ public class Main {
     
     public static void initialBalance() {
         System.out.print("\n\n  You created a " + Color.YELLOW + account.getClass().getSimpleName() + Color.RESET + " account.");
-        System.out.println(" Your account balance is " + Color.GREEN + "$" + "<account.getFunds()>" + Color.RESET);
+        System.out.println(" Your account balance is " + Color.GREEN + "$" + account.getFunds() + Color.RESET);
         System.out.print("\n  Enter anything to start trading: ");
         scanner.nextLine();
     }
@@ -85,17 +121,17 @@ public class Main {
         return shares;
     }
     
-    /* TODO
+  
     public static void displayPrices(int day) {
         System.out.println("\n\n\t  DAY " + day + " PRICES\n");
 
-        System.out.println("  " + Color.BLUE + Stock.AAPL + "\t\t" + Color.GREEN + getPrice(Stock.AAPL, day));
-        System.out.println("  " + Color.BLUE + Stock.FB + "\t\t" + Color.GREEN + getPrice(Stock.FB, day));
-        System.out.println("  " + Color.BLUE + Stock.GOOG + "\t\t" + Color.GREEN + getPrice(Stock.GOOG, day));
-        System.out.println("  " + Color.BLUE + Stock.TSLA + "\t\t" + Color.GREEN + getPrice(Stock.TSLA, day) + Color.RESET);
+        System.out.println("  " + Color.BLUE + "AAPL" + "\t\t" + Color.GREEN + getPrice("AAPL", day));
+        System.out.println("  " + Color.BLUE + "FB" + "\t\t" + Color.GREEN + getPrice("FB", day));
+        System.out.println("  " + Color.BLUE + "GOOG" + "\t\t" + Color.GREEN + getPrice("GOOG", day));
+        System.out.println("  " + Color.BLUE + "TSLA" + "\t\t" + Color.GREEN + getPrice("TSLA", day) + Color.RESET+"\n");
 
     }
-    */
+    
     public static void tradeStatus(String result) {
         System.out.println("\n  The trade was " + (result.equals("successful") ? Color.GREEN : Color.RED) + result + Color.RESET + ". Here is your portfolio:");
         System.out.println(account);
@@ -104,16 +140,38 @@ public class Main {
     }
     
     
-    /* TODO
-    public static String getPrice(Stock stock, int day) {
-        return "15.2343";
+    
+    public static String getPrice(String stock, int day) {
+        Path path=getPath(stock);
+        try{
+        return Files.lines(path).skip(1)
+        .map((value)->value.split(","))
+        .filter((value)->Double.parseDouble(value[0])==day)
+        .map((value)->value[1])
+        .findFirst()
+        .orElse(null);
+    }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+            return " ";
+        }
+
     }
 
 
     public static Path getPath(String stock) {
-        return null;
-    }
-    */
+        try{
+            Path path = Paths.get(Thread.currentThread().getContextClassLoader().getResource("src/main/data/"+stock+".csv").toURI());
+            return path;
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+            return null;
+        }
+        }  
+    
 
 
 }

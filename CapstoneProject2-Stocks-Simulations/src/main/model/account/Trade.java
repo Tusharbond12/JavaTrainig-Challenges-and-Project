@@ -1,4 +1,6 @@
 package src.main.model.account;
+import javax.lang.model.util.ElementScanner6;
+
 import src.main.model.account.Account;
 
 public class Trade {
@@ -63,15 +65,18 @@ public class Trade {
     public void setPrice(double price) {
         this.price = price;
     }
-    public void processTrade(Account acc)
+    public boolean processTrade(Account acc)
     {
         if(this.type.equals("SELL"))
         {
-             acc.sell(this.stock,this.price,this.shares);
+            return acc.sell(this.stock,this.price,this.shares);
         }
-        else if(this.type.equals("Buy"))
+        else if(this.type.equals("BUY"))
         {
-            acc.buy(this.stock,this.price,this.shares);
+           return acc.buy(this.stock,this.price,this.shares);
+        }
+        else{
+            return false;
         }
         
 
