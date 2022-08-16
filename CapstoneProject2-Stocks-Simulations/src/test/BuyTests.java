@@ -34,7 +34,7 @@ public class BuyTests {
      public void testBuyPersonal()
      {  boolean bool= acc1.buy("TSLA", 20.00, 20);
         if(bool){
-        assertEquals(acc1.getPortfolio().get("TSLA"), 25); 
+        assertEquals(acc1.getPortfolio().get("TSLA"), 40); 
         //assertEquals(acc.getFunds(), 3400-20*10);
         // assertEquals(acc.getPortfolio().get("TSLA"), 15);}
      }}

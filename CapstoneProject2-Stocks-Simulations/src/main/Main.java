@@ -3,14 +3,11 @@ package src.main;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
-import javax.naming.directory.InitialDirContext;
 
 import src.main.model.account.Account;
 import src.main.utils.Color;
